@@ -1,38 +1,72 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Todo List Application</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
-</head>
-<body>
-    <div class="container">
-        <div class="jumbotron text-center py-2 bg-info">
-            <span class="h1"><i class="bi bi-list-check"></i>&nbsp;ToDo list Application</span>
-        </div>
-        </div>
-    </div>
-    
 
-      <div id="app">
-          <div class="container">
-              <to-do :tasks="tasks" 
-                     :active="taskCount" 
-                     :completed="doneCount"
-                     :done="done" 
-                     :trash="trash"
-                     :trashed="trashCount"
-                     @add-task="addNewTask"
-                     @complete-task="completeTask"
-                     @remove-task="removeTask"
-                     @restore-task="restoreTask"></to-do>
-          </div>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Todo list</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+  <script src="https://kit.fontawesome.com/e1d5fcfa57.js" crossorigin="anonymous"></script>
+</head>
+
+<body class="container bg-success">
+  <div id="app" v-cloak>
+    <div class="row justify-content-center mt-5">
+      <div class="col-md-6 col-sm-12">
+        <h1><i class="fa-solid fa-list-check"></i> My ToDo</h1>
       </div>
-      
-    <script src="https://unpkg.com/vue@next"></script>
-    <script src="main.js"></script>
+    </div>
+    <div class="row justify-content-center mt-2">
+      <div class="col-md-6 col-sm-12">
+        <div class="card mt-5">
+
+          <div class="card-body">
+            <form @submit.prevent="addNewTask">
+              <div class="input-group input-group-lg">
+                <input v-model="newTask" type="text" class="form-control shadow-none border-top border-start border-end"
+                  placeholder="type an press enter" autocomplete="off">
+                <button type="submit" class="btn  btn-light" class="input-group-text" id="inputGroup-sizing-lg"><span
+                    class="h1">&plus;</span></button>
+              </div>
+          </div>
+          </form>
+          <details v-if="tasks.length" open>
+            <summary class="h6 mx-2">Active tasks: {{ taskCount }}</summary>
+            <ul class="list-group mx-2">
+            <todo-item v-for="(task, index) in tasks" :key="task.id" :title="task.title" :completed="task.completed"
+              @complete="completeTask(task, index)" @remove="removeTask(index)">
+            </todo-item>
+          </ul>
+          </details>
+          <details v-if="done.length">
+            <summary class="h6 mx-2">Completed tasks: {{ doneCount }}</summary>
+             <ul  class="list-group mx-2">          
+              <todo-item class="text-decoration-line-through" v-for="(task, index) in done" :key="task.id" :completed="task.completed" :title="task.title"
+                @complete="markIncomplete(task, index)"
+                @remove="sendToTrash(index)">
+              </todo-item>
+            </ul>
+            
+          </details>
+          <!-- Trash -->
+           <details v-if="trash.length">
+            <summary class="h6 mx-2">Trashed items: {{ trashCount }}</summary>
+             <ul  class="list-group mx-2">          
+              <todo-item class="text-decoration-line-through" v-for="(task, index) in trash" :key="task.id" :completed="task.completed" :title="task.title"
+                @complete="restoreTask(task, index)"
+                @remove="deleteFromTrash(index)">
+              </todo-item>
+            </ul>
+          </details>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://unpkg.com/vue@next"></script>
+  <script src="script.js"></script>
+
 </body>
+
 </html>
